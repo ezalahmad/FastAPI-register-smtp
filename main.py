@@ -22,3 +22,7 @@ def home(request: Request):
 def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
+@app.get("/user/signin")
+def login(req: Request):
+    return templates.TemplateResponse("/signin.html", {"request": req})
+
