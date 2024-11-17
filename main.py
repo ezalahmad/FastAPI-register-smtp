@@ -3,7 +3,7 @@
 
 from typing import Union
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from connection import Base, engine, sess_db
@@ -37,4 +37,14 @@ def login(req: Request):
 @app.get("/user/signup")
 def signup(req: Request):
     return templates.TemplateResponse("/signup.html", {"request": req})
+
+@app.post("/signupuser")
+def signupuser(db:Session=Depends(sess_db),
+               username: str = Form(),
+               email: str = Form(),
+               password: str = Form()):
+    print(username)
+    print(email)
+    print(password)
+    return "User created successfully."
 
