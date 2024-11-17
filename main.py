@@ -8,7 +8,9 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from connection import Base, engine, sess_db
 from sqlalchemy.orm import Session
-# import os
+
+# Repository
+from repositoryuser import UserRepository
 
 # Model
 from models import UserModel
@@ -39,12 +41,20 @@ def signup(req: Request):
     return templates.TemplateResponse("/signup.html", {"request": req})
 
 @app.post("/signupuser")
-def signupuser(db:Session=Depends(sess_db),
-               username: str = Form(),
-               email: str = Form(),
-               password: str = Form()):
+def signupuser(db:Session=Depends(sess_db), username: str = Form(),
+                                            email: str = Form(),
+                                            password: str = Form()):
     print(username)
     print(email)
     print(password)
-    return "User created successfully."
+
+    userRepository = UserRepository(db)
+
+    signup = UserModel(email=email, username=username, password=password)
+    success = userRepository.create_user(signup)
+
+    if success:
+        return "User created successfully."
+    else:
+        raise HTTPException(status_code=400, detail="Credentials not valid")
 
