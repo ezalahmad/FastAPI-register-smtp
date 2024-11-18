@@ -10,7 +10,7 @@ from connection import Base, engine, sess_db
 from sqlalchemy.orm import Session
 
 # Scurity
-from scurity import get_password_hash
+from scurity import get_password_hash, create_access_token
 
 # Repository
 from repositoryuser import UserRepository
@@ -59,6 +59,9 @@ def signupuser(db:Session=Depends(sess_db), username: str = Form(),
 
     signup = UserModel(email=email, username=username, password=get_password_hash(password))
     success = userRepository.create_user(signup)
+    token = create_access_token(signup)
+
+    print(token)
 
     if success:
         return "User created successfully."
