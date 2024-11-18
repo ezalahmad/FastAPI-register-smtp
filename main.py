@@ -3,7 +3,7 @@
 
 from typing import Union
 
-from fastapi import FastAPI, Request, Depends, Form
+from fastapi import FastAPI, Request, Depends, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from connection import Base, engine, sess_db
@@ -52,6 +52,10 @@ def signupuser(db:Session=Depends(sess_db), username: str = Form(),
     print(password)
 
     userRepository = UserRepository(db)
+
+    db_user = userRepository.get_user_by_username(username)
+    if db_user:
+        return "username is not valid"
 
     signup = UserModel(email=email, username=username, password=get_password_hash(password))
     success = userRepository.create_user(signup)

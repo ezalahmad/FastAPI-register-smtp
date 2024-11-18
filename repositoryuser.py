@@ -15,3 +15,9 @@ class UserRepository:
         except:
             return False
         return True
+
+    def get_user(self):
+        return self.sess.query(UserModel).all()
+
+    def get_user_by_username(self, username: str):
+        return self.sess.query(UserModel).filter(UserModel.username == username).first()
