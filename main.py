@@ -9,6 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from connection import Base, engine, sess_db
 from sqlalchemy.orm import Session
 
+# Scurity
+from scurity import get_password_hash
+
 # Repository
 from repositoryuser import UserRepository
 
@@ -50,7 +53,7 @@ def signupuser(db:Session=Depends(sess_db), username: str = Form(),
 
     userRepository = UserRepository(db)
 
-    signup = UserModel(email=email, username=username, password=password)
+    signup = UserModel(email=email, username=username, password=get_password_hash(password))
     success = userRepository.create_user(signup)
 
     if success:
