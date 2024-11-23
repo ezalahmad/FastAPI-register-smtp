@@ -40,6 +40,18 @@ def about(request: Request):
 def login(req: Request):
     return templates.TemplateResponse("/signin.html", {"request": req})
 
+@app.post("/signinuser")
+def signin_user(db: Session = Depends(sess_db), username: str = Form(...), password: str = Form(...)):
+    print(username)
+    print(password)
+    userRepository = UserRepository(db)
+    db_user = userRepository.get_user_by_username(username)
+
+    if not db_user:
+        return "username or password is not valid"
+
+    return "Success"
+
 @app.get("/user/signup")
 def signup(req: Request):
     return templates.TemplateResponse("/signup.html", {"request": req})
