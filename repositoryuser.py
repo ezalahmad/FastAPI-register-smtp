@@ -110,3 +110,26 @@ class SendEmailVerify:
         with smtplib.SMTP_SSL('mail.pythonhat.com', 465) as smtp:
             smtp.login(email_address, email_password)
             smtp.send_message(msg)
+
+
+# class SendEmailVerify:
+#     def sendVerify(token):
+#         email_address = "smtp_admin@pythonhat.com"
+#
+#         with open('password.txt') as f:
+#             email_password = f.read().strip()
+#
+#         msg = EmailMessage()
+#         msg['Subject'] = "Email subject"
+#         msg['From'] = email_address
+#         msg['To'] = "ezalahmad@gmail.com"
+#         msg.set_content(f"verify account: http://localhost:8000/user/verify/{token}")
+#
+#         try:
+#             with smtplib.SMTP_SSL('mail.pythonhat.com', 465) as smtp:
+#                 smtp.login(email_address, email_password)
+#                 smtp.send_message(msg)
+#         except Exception as e:
+#             print(f"Error sending email: {e}")
+#             raise HTTPException(status_code=500, detail="Failed to send email.")
+

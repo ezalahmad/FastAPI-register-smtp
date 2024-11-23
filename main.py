@@ -3,15 +3,15 @@
 
 from typing import Union
 
-from fastapi import FastAPI, Request, Depends, Form, HTTPException
+from fastapi import FastAPI, Request, Depends, Form, HTTPException, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from connection import Base, engine, sess_db
 from sqlalchemy.orm import Session
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 
 # Scurity
-from scurity import get_password_hash, create_access_token, verify_token
+from scurity import get_password_hash, create_access_token, verify_token, verify_password, COOKIE_NAME
 
 # Repository
 from repositoryuser import UserRepository, SendEmailVerify
@@ -40,17 +40,56 @@ def about(request: Request):
 def login(req: Request):
     return templates.TemplateResponse("/signin.html", {"request": req})
 
+# @app.post("/signinuser")
+# def signin_user(db: Session = Depends(sess_db), username: str = Form(...), password: str = Form(...)):
+#     print(username)
+#     print(password)
+#     userRepository = UserRepository(db)
+#     db_user = userRepository.get_user_by_username(username)
+#
+#     if not db_user:
+#         return "username or password is not valid"
+#     if verify_password(password, db_user.password):
+#         token = create_access_token(db_user)
+#         response.set_cookie(
+#                 key=COOKIE_NAME,
+#                 value=token,
+#                 httponly=True,
+#                 expires=1800)
+#         return {COOKIE_NAME: token, "token_type": "secret"}
+
+
+# @app.post("/signinuser")
+# def signin_user(response:Response,db:Session=Depends(sess_db),username : str = Form(),password:str=Form()):
+#     userRepository = UserRepository(db)
+#     db_user = userRepository.get_user_by_username(username)
+#     if not db_user:
+#         return "username or password is not valid"
+#
+#     if verify_password(password,db_user.password):
+#         token=create_access_token(db_user)
+#         response.set_cookie(
+#             key=COOKIE_NAME,
+#             value=token,
+#             httponly=True,
+#             expires=1800
+#         )
+#         return {COOKIE_NAME:token,"token_type":"secret"}
+
+
 @app.post("/signinuser")
-def signin_user(db: Session = Depends(sess_db), username: str = Form(...), password: str = Form(...)):
-    print(username)
-    print(password)
+def signin_user(response: Response, db: Session = Depends(sess_db), username: str = Form(...), password: str = Form(...)):
     userRepository = UserRepository(db)
     db_user = userRepository.get_user_by_username(username)
 
-    if not db_user:
-        return "username or password is not valid"
+    if not db_user or not verify_password(password, db_user.password):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    return "Success"
+    token = create_access_token(db_user)
+    response.set_cookie(key=COOKIE_NAME, value=token, httponly=True, expires=1800)
+
+    return {COOKIE_NAME: token, "token_type": "bearer"}
+
 
 @app.get("/user/signup")
 def signup(req: Request):
