@@ -36,6 +36,13 @@
 #         # msg["Subject"] = "Email Verification"
 
 
+# from sqlalchemy.orm import Session
+# from models import UserModel
+# from sqlalchemy.orm import Session
+#
+# import smtplib
+# from email.message import EmailMessage
+
 from sqlalchemy.orm import Session
 from models import UserModel
 from typing import Dict,Any
@@ -80,14 +87,14 @@ class UserRepository:
 class SendEmailVerify:
 
     def sendVerify(token):
-        email_address = "ezalahmad@gmail.com" # fastapi-login
-        email_password = "jzqb elzo afak ydar"
+        email_address = "smtp_admin@pythonhat.com" # fastapi-login
+        email_password = "h3ll0_br0ther"
 
         # create email
         msg = EmailMessage()
         msg['Subject'] = "Email subject"
         msg['From'] = email_address
-        msg['To'] = "ezal.sub@gmail.com" # type Email
+        msg['To'] = "ezalahmad@gmail.com" # type Email
         msg.set_content(
                 f"""\
                         verify account
@@ -96,6 +103,6 @@ class SendEmailVerify:
 
         )
         # send email
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        with smtplib.SMTP_SSL('mail.pythonhat.com', 465) as smtp:
             smtp.login(email_address, email_password)
             smtp.send_message(msg)
