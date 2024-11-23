@@ -8,9 +8,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from connection import Base, engine, sess_db
 from sqlalchemy.orm import Session
+from fastapi.responses import RedirectResponse
 
 # Scurity
-from scurity import get_password_hash, create_access_token
+from scurity import get_password_hash, create_access_token, verify_token
 
 # Repository
 from repositoryuser import UserRepository, SendEmailVerify
@@ -69,4 +70,25 @@ def signupuser(db:Session=Depends(sess_db), username: str = Form(),
         return "User created successfully."
     else:
         raise HTTPException(status_code=400, detail="Credentials not valid")
+
+@app.get("/user/verify/{token}")
+def verify_user(token, db:Session=Depends(sess_db)):
+    userRepository = UserRepository(db)
+    payload = verify_token(token)
+    username = payload.get("username")
+    db_user = userRepository.get_user_by_username(username)
+    # db_user = userRepository.get_user_by_username(username)
+
+    if not username:
+        raise HTTPException(status_code=401, detail="Credentials not correct")
+
+    if db_user.is_active == True:
+        return "User verified successfully."
+
+    db_user.is_active = True
+    db.commit()
+    # response = RedirectResponse(url="/user/signin", status_code=status.HTTP_302_FOUND)
+    response = RedirectResponse(url="/user/signin")
+
+    return response
 

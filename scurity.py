@@ -27,6 +27,15 @@ def create_access_token(user):
         print(str(ex))
         raise ex
 
+# create verify Token
+def verify_token(token):
+    try:
+        payload = jwt.decode(token, key=JWT_SECRET)
+        return payload
+    except Exception as ex:
+        print(str(ex))
+        raise ex
+
 # password hash
 def get_password_hash(password):
     return pwd_context.hash(password)

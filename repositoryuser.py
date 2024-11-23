@@ -88,7 +88,11 @@ class SendEmailVerify:
 
     def sendVerify(token):
         email_address = "smtp_admin@pythonhat.com" # fastapi-login
-        email_password = "h3ll0_br0ther"
+        # email_password = "h3ll0_br0ther"
+
+        # read password from file
+        with open('password.txt') as f:
+            email_password = f.read().strip()
 
         # create email
         msg = EmailMessage()
