@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from scurity import get_password_hash, create_access_token
 
 # Repository
-from repositoryuser import UserRepository
+from repositoryuser import UserRepository, SendEmailVerify
 
 # Model
 from models import UserModel
@@ -62,6 +62,8 @@ def signupuser(db:Session=Depends(sess_db), username: str = Form(),
     token = create_access_token(signup)
 
     print(token)
+
+    SendEmailVerify.sendVerify(token)
 
     if success:
         return "User created successfully."
