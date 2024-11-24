@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 SMTP_SERVER = 'mail.pythonhat.com'
 SMTP_PORT = 465
 EMAIL = 'smtp_admin@pythonhat.com'  # Replace with your email
-PASSWORD = 'h3'        # Replace with your password
+PASSWORD = 'h3llo'        # Replace with your password
 
 # Email content
 recipient = 'ezalahmad@gmail.com'  # Replace with recipient's email
